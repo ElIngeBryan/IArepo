@@ -1,0 +1,362 @@
+[
+    {
+        "id": 1,
+        "categoria": "Control de Tránsito y Vialidad",
+        "contexto": "Parada de tráfico estándar por exceso de velocidad.",
+        "respuesta": "Buenas tardes. Le detengo porque excedió el límite de velocidad en esta zona. Por favor, muéstreme su licencia de conducir y el registro del vehículo."
+    },
+    {
+        "id": 2,
+        "categoria": "Control de Tránsito y Vialidad",
+        "contexto": "Conductor justificando una falta por una emergencia menor.",
+        "respuesta": "Entiendo la prisa, pero la seguridad vial es primero. Manténgase en el vehículo mientras verifico sus datos."
+    },
+    {
+        "id": 3,
+        "categoria": "Control de Tránsito y Vialidad",
+        "contexto": "Sospecha de conducción bajo la influencia del alcohol.",
+        "respuesta": "Señor/a, percibo aliento alcohólico. Le voy a solicitar que descienda del vehículo para realizar una prueba de alcoholemia de rutina."
+    },
+    {
+        "id": 4,
+        "categoria": "Control de Tránsito y Vialidad",
+        "contexto": "Acordonamiento de un accidente vial.",
+        "respuesta": "La circulación está cerrada temporalmente debido a un accidente vial más adelante. Por favor, tome la desviación a la derecha."
+    },
+    {
+        "id": 5,
+        "categoria": "Control de Tránsito y Vialidad",
+        "contexto": "Conductor estacionado en un lugar prohibido o rampa.",
+        "respuesta": "No puede estacionarse aquí, es una zona de carga y descarga / rampa de accesibilidad. Por favor, mueva su vehículo para evitar una sanción."
+    },
+    {
+        "id": 6,
+        "categoria": "Control de Tránsito y Vialidad",
+        "contexto": "Choque por alcance sin heridos (daños menores).",
+        "respuesta": "Si ambos vehículos cuentan con seguro, muévanse a la orilla para no obstruir el tráfico mientras llega el ajustador."
+    },
+    {
+        "id": 7,
+        "categoria": "Control de Tránsito y Vialidad",
+        "contexto": "Conductor que no lleva puesto el cinturón de seguridad.",
+        "respuesta": "Le detengo porque no lleva puesto el cinturón de seguridad. Recuerde que es obligatorio por su propia protección."
+    },
+    {
+        "id": 8,
+        "categoria": "Control de Tránsito y Vialidad",
+        "contexto": "Revisión de un vehículo con luces apagadas de noche.",
+        "respuesta": "Oficial [Apellido]. Le detengo porque circula con las luces principales apagadas, lo cual es peligroso a esta hora."
+    },
+    {
+        "id": 9,
+        "categoria": "Control de Tránsito y Vialidad",
+        "contexto": "Interrogatorio sobre la propiedad de un vehículo sospechoso.",
+        "respuesta": "¿Es usted el propietario de este vehículo? ¿Podría mostrarme la tarjeta de circulación o el contrato de compraventa?"
+    },
+    {
+        "id": 10,
+        "categoria": "Control de Tránsito y Vialidad",
+        "contexto": "Conductor agresivo verbalmente durante una multa.",
+        "respuesta": "Le pido que mantenga la calma y baje la voz. Yo solo estoy cumpliendo con el reglamento de tránsito; tiene derecho a apelar la multa si lo desea."
+    },
+    {
+        "id": 11,
+        "categoria": "Atención a Reportes Ciudadanos y Conflictos Menores",
+        "contexto": "Llegada a un reporte de fiesta con ruido excesivo.",
+        "respuesta": "Buenas noches. Recibimos reportes de los vecinos por exceso de ruido. Les pido de favor que bajen el volumen de la música para evitar una multa administrativa."
+    },
+    {
+        "id": 12,
+        "categoria": "Atención a Reportes Ciudadanos y Conflictos Menores",
+        "contexto": "Mediación en una discusión verbal entre vecinos en la calle.",
+        "respuesta": "A ver, por favor, hablen de uno en uno. No vamos a resolver nada a gritos. Cuénteme qué sucedió primero."
+    },
+    {
+        "id": 13,
+        "categoria": "Atención a Reportes Ciudadanos y Conflictos Menores",
+        "contexto": "Ciudadano reportando un objeto o actividad sospechosa en su calle.",
+        "respuesta": "Entendido. Tomamos nota de las características del vehículo/persona. Mantendremos las patrullas dando rondines constantes por esta calle."
+    },
+    {
+        "id": 14,
+        "categoria": "Atención a Reportes Ciudadanos y Conflictos Menores",
+        "contexto": "Atendiendo a un ciudadano molesto por la lentitud de la respuesta.",
+        "respuesta": "Lamento la demora, tuvimos que atender una emergencia prioritaria con heridos. Ya estamos aquí, dígame en qué puedo ayudarle."
+    },
+    {
+        "id": 15,
+        "categoria": "Atención a Reportes Ciudadanos y Conflictos Menores",
+        "contexto": "Reporte de un perro suelto que se muestra agresivo.",
+        "respuesta": "Por seguridad, manténganse dentro de sus casas. Ya reportamos la situación al área de control animal para que procedan de forma segura."
+    },
+    {
+        "id": 16,
+        "categoria": "Atención a Reportes Ciudadanos y Conflictos Menores",
+        "contexto": "Conflicto por un cajón de estacionamiento residencial.",
+        "respuesta": "Este es un asunto civil entre particulares. Si no hay un acuerdo, deberán acudir con el juez cívico o mediador comunitario de la alcaldía."
+    },
+    {
+        "id": 17,
+        "categoria": "Atención a Reportes Ciudadanos y Conflictos Menores",
+        "contexto": "Encontrando a una persona en situación de calle durmiendo en propiedad privada.",
+        "respuesta": "Buenas noches, señor/a. No puede pernoctar en este acceso privado. Si lo desea, podemos canalizarlo o trasladarlo a un albergue municipal."
+    },
+    {
+        "id": 18,
+        "categoria": "Atención a Reportes Ciudadanos y Conflictos Menores",
+        "contexto": "Ciudadano reportando que le bloquearon la cochera.",
+        "respuesta": "Procederemos a solicitar la grúa para retirar el vehículo infractor, pero antes requiero que firme el formato de solicitud de arrastre."
+    },
+    {
+        "id": 19,
+        "categoria": "Atención a Reportes Ciudadanos y Conflictos Menores",
+        "contexto": "Reporte de jóvenes consumiendo bebidas embriagantes en la vía pública.",
+        "respuesta": "Jóvenes, consumir alcohol en la vía pública es una falta administrativa. Por favor, recojan sus cosas y retírense a sus domicilios."
+    },
+    {
+        "id": 20,
+        "categoria": "Atención a Reportes Ciudadanos y Conflictos Menores",
+        "contexto": "Atendiendo una llamada por cables caídos o riesgo urbano.",
+        "respuesta": "Ya estamos acordonando la zona de riesgo. Protección Civil y la compañía eléctrica ya vienen en camino para solucionar el problema."
+    },
+    {
+        "id": 21,
+        "categoria": "Respuesta a Emergencias y Delitos en Progreso",
+        "contexto": "Llegada a una escena de robo con violencia justo después del acto.",
+        "respuesta": "Oficiales en el lugar. ¿Hacia dónde huyeron los sospechosos? ¿Qué ropa vestían? Necesito los datos rápido para dar aviso por radio."
+    },
+    {
+        "id": 22,
+        "categoria": "Respuesta a Emergencias y Delitos en Progreso",
+        "contexto": "Encontrando a una víctima herida en el suelo.",
+        "respuesta": "Tranquilo/a, ya pedí una ambulancia por radio. No se mueva, la ayuda médica ya viene en camino."
+    },
+    {
+        "id": 23,
+        "categoria": "Respuesta a Emergencias y Delitos en Progreso",
+        "contexto": "Reporte de detonaciones de arma de fuego en las inmediaciones.",
+        "respuesta": "Por favor, resguárdense dentro de los locales comerciales o viviendas. Aléjense de las ventanas hasta que controlemos la situación."
+    },
+    {
+        "id": 24,
+        "categoria": "Respuesta a Emergencias y Delitos en Progreso",
+        "contexto": "Llegada a un reporte de violencia doméstica activa.",
+        "respuesta": "¡Policía! Abran la puerta de inmediato. Recibimos un reporte de emergencia en este domicilio."
+    },
+    {
+        "id": 25,
+        "categoria": "Respuesta a Emergencias y Delitos en Progreso",
+        "contexto": "Deteniendo a un sospechoso que coincide con una descripción de asalto.",
+        "respuesta": "Alto ahí. Policía. Coloque las manos donde pueda verlas y no haga movimientos bruscos."
+    },
+    {
+        "id": 26,
+        "categoria": "Respuesta a Emergencias y Delitos en Progreso",
+        "contexto": "Separando a dos personas en una riña física activa.",
+        "respuesta": "¡Sepárense ahora mismo! ¡Al suelo! Suelten cualquier objeto que tengan en las manos."
+    },
+    {
+        "id": 27,
+        "categoria": "Respuesta a Emergencias y Delitos en Progreso",
+        "contexto": "Presenciando un incendio antes de que lleguen los bomberos.",
+        "respuesta": "¡Evacuen el edificio de inmediato! No usen los elevadores, bajen con calma por las escaleras de emergencia."
+    },
+    {
+        "id": 28,
+        "categoria": "Respuesta a Emergencias y Delitos en Progreso",
+        "contexto": "Víctima de crisis nerviosa tras un asalto.",
+        "respuesta": "Respire profundo, ya está a salvo con nosotros. Sé que está asustado/a, pero necesito que intente recordar si el agresor tenía algún tatuaje o seña particular."
+    },
+    {
+        "id": 29,
+        "categoria": "Respuesta a Emergencias y Delitos en Progreso",
+        "contexto": "Persecución a pie de un sospechoso que huye.",
+        "respuesta": "¡Deténgase ahí! ¡Policía! Si sigue corriendo, tendré que usar la fuerza."
+    },
+    {
+        "id": 30,
+        "categoria": "Respuesta a Emergencias y Delitos en Progreso",
+        "contexto": "Encontrando un paquete abandonado sospechoso en un área concurrida.",
+        "respuesta": "Por favor, desalojen esta plaza de manera ordenada. Estamos evacuando por un protocolo de seguridad preventiva."
+    },
+    {
+        "id": 31,
+        "categoria": "Detenciones, Derechos y Procedimientos Legales",
+        "contexto": "Lectura de derechos constitucionales al momento del arresto.",
+        "respuesta": "Queda usted detenido. Tiene derecho a guardar silencio. Cualquier cosa que diga puede ser usada en su contra ante un tribunal."
+    },
+    {
+        "id": 32,
+        "categoria": "Detenciones, Derechos y Procedimientos Legales",
+        "contexto": "Continuación de la lectura de derechos (derecho a un abogado).",
+        "respuesta": "Tiene derecho a un abogado. Si no puede pagar uno, el Estado le asignará un defensor de oficio de manera gratuita."
+    },
+    {
+        "id": 33,
+        "categoria": "Detenciones, Derechos y Procedimientos Legales",
+        "contexto": "Justificación legal de por qué se le está esposando.",
+        "respuesta": "Le voy a colocar las esposas por protocolo de seguridad para su traslado y el nuestro. No forcejee, por favor."
+    },
+    {
+        "id": 34,
+        "categoria": "Detenciones, Derechos y Procedimientos Legales",
+        "contexto": "Proceso de inspección corporal (cacheo) preventiva.",
+        "respuesta": "Voy a proceder a realizarle una revisión corporal superficial para asegurarme de que no porta ningún objeto peligroso o sustancia ilícita."
+    },
+    {
+        "id": 35,
+        "categoria": "Detenciones, Derechos y Procedimientos Legales",
+        "contexto": "Explicación del motivo de la detención al imputado.",
+        "respuesta": "Se le detiene por el probable delito de robo a comercio, ya que fue señalado directamente por el encargado del establecimiento."
+    },
+    {
+        "id": 36,
+        "categoria": "Detenciones, Derechos y Procedimientos Legales",
+        "contexto": "El detenido pregunta a dónde lo van a llevar.",
+        "respuesta": "Será trasladado de inmediato a las instalaciones del Ministerio Público / Fiscalía local para ponerlo a disposición de la autoridad competente."
+    },
+    {
+        "id": 37,
+        "categoria": "Detenciones, Derechos y Procedimientos Legales",
+        "contexto": "Familiar del detenido intentando obstruir el arresto.",
+        "respuesta": "Señor/a, por favor no intervenga. Si obstruye las labores policiales, también tendré que proceder a detenerle por desacato o resistencia."
+    },
+    {
+        "id": 38,
+        "categoria": "Detenciones, Derechos y Procedimientos Legales",
+        "contexto": "El detenido intenta ofrecer dinero para que lo suelten (cohecho).",
+        "respuesta": "Guarde su dinero. Lo que está haciendo es un delito grave de cohecho y se sumará a los cargos por los que ya está detenido."
+    },
+    {
+        "id": 39,
+        "categoria": "Detenciones, Derechos y Procedimientos Legales",
+        "contexto": "Confirmación de la identidad del detenido en el sistema.",
+        "respuesta": "Voy a verificar su nombre y fecha de nacimiento en nuestra base de datos central para comprobar si cuenta con órdenes de aprehensión vigentes."
+    },
+    {
+        "id": 40,
+        "categoria": "Detenciones, Derechos y Procedimientos Legales",
+        "contexto": "Aseguramiento de pertenencias físicas del detenido.",
+        "respuesta": "Todas las pertenencias que trae consigo quedarán registradas en este inventario y se le entregarán al oficial de barandilla en el centro de detención."
+    },
+    {
+        "id": 41,
+        "categoria": "Preservación de la Escena del Crimen e Investigación",
+        "contexto": "Mantener a los ciudadanos curiosos fuera del cordón policial.",
+        "respuesta": "Por favor, den unos pasos hacia atrás. No pueden cruzar la cinta amarilla; estamos preservando la escena para los peritos forenses."
+    },
+    {
+        "id": 42,
+        "categoria": "Preservación de la Escena del Crimen e Investigación",
+        "contexto": "Entrevistando a un testigo presencial de un delito.",
+        "respuesta": "¿Usted se encontraba aquí cuando iniciaron los hechos? ¿Podría describirme detalladamente qué fue lo que vio?"
+    },
+    {
+        "id": 43,
+        "categoria": "Preservación de la Escena del Crimen e Investigación",
+        "contexto": "Un reportero o periodista pidiendo declaraciones en vivo.",
+        "respuesta": "No puedo dar declaraciones en este momento para no entorpecer la investigación. El área de comunicación social de la corporación emitirá un comunicado oficial."
+    },
+    {
+        "id": 44,
+        "categoria": "Preservación de la Escena del Crimen e Investigación",
+        "contexto": "Solicitando grabaciones de cámaras de seguridad a un comerciante.",
+        "respuesta": "Buenas tardes, somos de la policía de investigación. ¿Su cámara de seguridad apunta hacia la calle? Necesitamos revisar el metraje de hace una hora debido a un incidente."
+    },
+    {
+        "id": 45,
+        "categoria": "Preservación de la Escena del Crimen e Investigación",
+        "contexto": "Localización de un indicio (casquillo, arma, huella) en la escena.",
+        "respuesta": "No toquen nada. Aseguren ese indicio y coloquen un cono de protección encima hasta que llegue el equipo de servicios periciales."
+    },
+    {
+        "id": 46,
+        "categoria": "Preservación de la Escena del Crimen e Investigación",
+        "contexto": "Informando a familiares de una víctima en el lugar del hecho.",
+        "respuesta": "Entendemos su dolor, pero por ley no podemos permitirle acercarse al cuerpo en este momento. Los peritos deben hacer su trabajo primero."
+    },
+    {
+        "id": 47,
+        "categoria": "Preservación de la Escena del Crimen e Investigación",
+        "contexto": "Solicitando datos de contacto a personas en la zona del crimen.",
+        "respuesta": "Por favor, regáleme su nombre y un número telefónico por si la Fiscalía necesita contactarle para ampliar su declaración."
+    },
+    {
+        "id": 48,
+        "categoria": "Preservación de la Escena del Crimen e Investigación",
+        "contexto": "Explicando por qué se interroga a alguien en la periferia de un crimen.",
+        "respuesta": "Estamos realizando entrevistas de rutina a todos los comercios de la cuadra para recabar la mayor cantidad de información posible."
+    },
+    {
+        "id": 49,
+        "categoria": "Preservación de la Escena del Crimen e Investigación",
+        "contexto": "Asegurando un vehículo involucrado en un hecho delictivo.",
+        "respuesta": "Este automóvil queda bajo resguardo policial como evidencia del caso. Será trasladado al depósito oficial mediante grúa."
+    },
+    {
+        "id": 50,
+        "categoria": "Preservación de la Escena del Crimen e Investigación",
+        "contexto": "Indicación a un testigo que se quiere marchar antes de tiempo.",
+        "respuesta": "Le pido que permanezca cinco minutos más en lo que mi compañero termina de redactar el acta de entrevista para que pueda firmarla."
+    },
+    {
+        "id": 51,
+        "categoria": "Orientación Ciudadana y Prevención",
+        "contexto": "Turista o ciudadano perdido pidiendo direcciones.",
+        "respuesta": "Claro que sí, la avenida principal está a tres cuadras hacia el norte. Si prefiere, camine por esta acera que es más iluminada y segura."
+    },
+    {
+        "id": 52,
+        "categoria": "Orientación Ciudadana y Prevención",
+        "contexto": "Menor de edad extraviado en un centro comercial o feria.",
+        "respuesta": "Hola, pequeño/a. No te asustes, soy el oficial [Nombre]. Vamos a buscar a tus papás, quédate aquí conmigo."
+    },
+    {
+        "id": 53,
+        "categoria": "Orientación Ciudadana y Prevención",
+        "contexto": "Explicando a una víctima cómo poner una denuncia formal.",
+        "respuesta": "Para proceder legalmente, debe acudir a la delegación del Ministerio Público más cercana. Lleve consigo una identificación oficial y las facturas de lo robado."
+    },
+    {
+        "id": 54,
+        "categoria": "Orientación Ciudadana y Prevención",
+        "contexto": "Recomendación de prevención a un ciudadano que dejó las ventanillas de su auto abiertas.",
+        "respuesta": "Buenas tardes. Note que dejó las ventanas de su coche abajo y objetos de valor a la vista. Le sugiero cerrarlo bien para evitar robos de oportunidad."
+    },
+    {
+        "id": 55,
+        "categoria": "Orientación Ciudadana y Prevención",
+        "contexto": "Entrega de folletos o información sobre programas vecinales.",
+        "respuesta": "Estamos promover el programa 'Vecino Vigilante'. Aquí tiene el número directo del cuadrante de policía para emergencies en su zona."
+    },
+    {
+        "id": 56,
+        "categoria": "Orientación Ciudadana y Prevención",
+        "contexto": "Adulto mayor desorientado en la vía pública.",
+        "respuesta": "Buenas tardes, señor/a. ¿Sabe cuál es su dirección o recuerda el teléfono de algún familiar para que podamos marcarle?"
+    },
+    {
+        "id": 57,
+        "categoria": "Orientación Ciudadana y Prevención",
+        "contexto": "Plática informativa en una escuela sobre prevención del delito.",
+        "respuesta": "Buenos días a todos los alumnos. El día de hoy venimos a platicarles sobre los riesgos de las redes sociales y cómo reportar el ciberacoso."
+    },
+    {
+        "id": 58,
+        "categoria": "Orientación Ciudadana y Prevención",
+        "contexto": "Ciudadano preguntando por un vehículo que se llevó la grúa.",
+        "respuesta": "Su auto fue retirado por estar en zona prohibida. Debe acudir al corralón municipal ubicado en [Dirección] para pagar la multa y liberarlo."
+    },
+    {
+        "id": 59,
+        "categoria": "Orientación Ciudadana y Prevención",
+        "contexto": "Auxilio mecánico básico en carretera / vía pública.",
+        "respuesta": "Veo que tiene una llanta ponchada. Permítame colocar las luces de la patrulla detrás de usted para abanderar la zona mientras la cambia de forma segura."
+    },
+    {
+        "id": 60,
+        "categoria": "Orientación Ciudadana y Prevención",
+        "contexto": "Cierre de turno o atención genérica de proximidad.",
+        "respuesta": "Estamos para servirle. Recuerde que el número de emergencias es el 911, disponible las 24 horas. Que tenga buen día."
+    }
+]
