@@ -97,11 +97,11 @@ class Juego:
                 s = pygame.Surface(size, pygame.SRCALPHA); s.fill(color); return s
 
         base = os.path.dirname(__file__)
-        self.jugador_frames = [safe_load(os.path.join(base, f"assets/sprites/mario_frame_{i}.png"), self.player_size_normal) for i in range(1, 5)]
+        self.jugador_frames = [safe_load(os.path.join(base, f"assets/sprites/mono_frame_{i}.png"), self.player_size_normal) for i in range(1, 5)]
         self.jugador_agachado_img = pygame.transform.smoothscale(self.jugador_frames[0], self.player_size_agachado)
-        self.bala_img = safe_load(os.path.join(base, "assets/sprites/fire_ball.png"), self.bullet_size, (160, 120, 255))
-        self.fondo_img = safe_load(os.path.join(base, "assets/game/fondoMario.png"), (self.w, self.h), (40, 40, 40))
-        self.nave_img = safe_load(os.path.join(base, "assets/game/bowser.png"), self.ship_size, (140, 255, 200))
+        self.bala_img = safe_load(os.path.join(base, "assets/sprites/purple_ball.png"), self.bullet_size, (160, 120, 255))
+        self.fondo_img = safe_load(os.path.join(base, "assets/game/fondo2.png"), (self.w, self.h), (40, 40, 40))
+        self.nave_img = safe_load(os.path.join(base, "assets/game/ufo.png"), self.ship_size, (140, 255, 200))
 
     def _toggle_fullscreen(self) -> None:
         self._fullscreen = not self._fullscreen
@@ -259,8 +259,7 @@ class Juego:
         
         # =========================================================================
         # LA MAGIA PARA POCOS DATOS: solver="lbfgs" y menor regularización (alpha)
-        # Esto le permite memorizar exactamente lo que hiciste en la partida corta
-        # cambiamos el algoritmo ADAM (Adaptative moment estimation).
+        # Esto le permite memorizar exactamente lo que hiciste en la partida corta.
         # =========================================================================
         self.modelo = MLPClassifier(
             hidden_layer_sizes=(24, 24), 
