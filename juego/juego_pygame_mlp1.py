@@ -30,10 +30,16 @@ class Sample:
     velocidad_bala: float
     distancia: float
     bala_y: float  
-    h1: int  # Memoria frame -4
-    h2: int  # Memoria frame -3
-    h3: int  # Memoria frame -2
-    h4: int  # Memoria frame -1
+    h1: int  
+    h2: int  
+    h3: int  
+    h4: int  
+    h5: int
+    h6: int
+    h7: int   # Nuevos frames de memoria añadidos
+    h8: int
+    h9: int
+    h10: int
     accion: int    
 
 class Juego:
@@ -43,7 +49,7 @@ class Juego:
         self._fullscreen = False
         start_w, start_h = BASE_W, BASE_H
         self.pantalla = pygame.display.set_mode((start_w, start_h), self._flags)
-        pygame.display.set_caption("IA: Clonación Exacta (LBFGS) - MLP")
+        pygame.display.set_caption("IA: Clonación con Estados Discretos (IoT Style) - Memoria Ampliada")
 
         self.BLANCO = (255, 255, 255)
         self.NEGRO = (0, 0, 0)
@@ -58,7 +64,8 @@ class Juego:
         self.scaler: Optional[StandardScaler] = None
         self.modelo_entrenado = False
         
-        self.memoria_acciones = [0, 0, 0, 0]
+        # Historial ampliado a 10 frames para capturar espameo
+        self.memoria_acciones = [0] * 10
 
         self.w, self.h = start_w, start_h
         self.scale = 1.0
@@ -92,16 +99,16 @@ class Juego:
         def safe_load(path: str, size: Tuple[int, int], color=(200, 200, 200, 255)) -> pygame.Surface:
             try:
                 img = pygame.image.load(path).convert_alpha()
-                return pygame.transform.smoothscale(img, size)
+                return pygame.transform.smoothscale(img, size) 
             except:
                 s = pygame.Surface(size, pygame.SRCALPHA); s.fill(color); return s
 
         base = os.path.dirname(__file__)
-        self.jugador_frames = [safe_load(os.path.join(base, f"assets/sprites/mono_frame_{i}.png"), self.player_size_normal) for i in range(1, 5)]
+        self.jugador_frames = [safe_load(os.path.join(base, f"assets/sprites/mario_frame_{i}.png"), self.player_size_normal) for i in range(1, 5)]
         self.jugador_agachado_img = pygame.transform.smoothscale(self.jugador_frames[0], self.player_size_agachado)
-        self.bala_img = safe_load(os.path.join(base, "assets/sprites/purple_ball.png"), self.bullet_size, (160, 120, 255))
-        self.fondo_img = safe_load(os.path.join(base, "assets/game/fondo2.png"), (self.w, self.h), (40, 40, 40))
-        self.nave_img = safe_load(os.path.join(base, "assets/game/ufo.png"), self.ship_size, (140, 255, 200))
+        self.bala_img = safe_load(os.path.join(base, "assets/sprites/fire_ball.png"), self.bullet_size, (160, 120, 255))
+        self.fondo_img = safe_load(os.path.join(base, "assets/game/fondoMario.png"), (self.w, self.h), (40, 40, 40))
+        self.nave_img = safe_load(os.path.join(base, "assets/game/bowser.png"), self.ship_size, (140, 255, 200))
 
     def _toggle_fullscreen(self) -> None:
         self._fullscreen = not self._fullscreen
@@ -125,7 +132,7 @@ class Juego:
         self.en_suelo = True
         self.salto_vel = self.salto_vel_inicial
         self.fondo_x1, self.fondo_x2 = 0, self.w
-        self.memoria_acciones = [0, 0, 0, 0] 
+        self.memoria_acciones = [0] * 10 
 
     def _reset_modelo(self) -> None:
         self.modelo = None
@@ -139,9 +146,9 @@ class Juego:
         try:
             with open(ruta, "w", newline="", encoding="utf-8") as f:
                 writer = csv.writer(f)
-                writer.writerow(["velocidad_bala", "distancia", "bala_y", "h1", "h2", "h3", "h4", "accion"])
+                writer.writerow(["velocidad_bala", "distancia", "bala_y", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "accion"])
                 for s in self.datos_modelo:
-                    writer.writerow([s.velocidad_bala, s.distancia, s.bala_y, s.h1, s.h2, s.h3, s.h4, s.accion])
+                    writer.writerow([s.velocidad_bala, s.distancia, s.bala_y, s.h1, s.h2, s.h3, s.h4, s.h5, s.h6, s.h7, s.h8, s.h9, s.h10, s.accion])
         except Exception as e:
             return f"Error al guardar CSV: {e}"
         return f"CSV guardado en datos_mlp.csv ({len(self.datos_modelo)} filas)."
@@ -190,7 +197,13 @@ class Juego:
 
     def disparar_bala(self) -> None:
         if not self.bala_disparada:
-            self.velocidad_bala = int(random.randint(-22, -6) * self.scale)
+            # =============================================================
+            # CAMBIO CLAVE: Discretización del espacio de velocidad
+            # =============================================================
+            opciones_velocidad = [-10, -16, -24] # Lenta, Rápida, Muy Rápida
+            self.velocidad_bala = int(random.choice(opciones_velocidad) * self.scale)
+            
+            # Alturas discretas (Alta, Media, Baja)
             tipo_bala = random.randint(1, 3)
             
             if tipo_bala == 1: self.bala.y = self.ground_y + int(32 * self.scale)  
@@ -241,6 +254,12 @@ class Juego:
             h2=float(self.memoria_acciones[1]),
             h3=float(self.memoria_acciones[2]),
             h4=float(self.memoria_acciones[3]),
+            h5=float(self.memoria_acciones[4]),
+            h6=float(self.memoria_acciones[5]),
+            h7=float(self.memoria_acciones[6]),
+            h8=float(self.memoria_acciones[7]),
+            h9=float(self.memoria_acciones[8]),
+            h10=float(self.memoria_acciones[9]),
             accion=accion_manual
         ))
 
@@ -248,7 +267,7 @@ class Juego:
         if len(self.datos_modelo) < 150:
             return False, f"Faltan datos ({len(self.datos_modelo)}/150). Juega en Manual."
         
-        X = [[s.velocidad_bala, s.distancia, s.bala_y, s.h1, s.h2, s.h3, s.h4] for s in self.datos_modelo]
+        X = [[s.velocidad_bala, s.distancia, s.bala_y, s.h1, s.h2, s.h3, s.h4, s.h5, s.h6, s.h7, s.h8, s.h9, s.h10] for s in self.datos_modelo]
         y = [s.accion for s in self.datos_modelo]
         
         if len(set(y)) < 2:
@@ -257,15 +276,12 @@ class Juego:
         self.scaler = StandardScaler()
         X_scaled = self.scaler.fit_transform(X)
         
-        # =========================================================================
-        # LA MAGIA PARA POCOS DATOS: solver="lbfgs" y menor regularización (alpha)
-        # Esto le permite memorizar exactamente lo que hiciste en la partida corta.
-        # =========================================================================
+        # Aumentamos ligeramente las capas ocultas para manejar la mayor memoria
         self.modelo = MLPClassifier(
-            hidden_layer_sizes=(24, 24), 
+            hidden_layer_sizes=(32, 32), 
             activation="relu",
-            solver="lbfgs",       # <-- Optimizador perfecto para memorizar
-            alpha=1e-5,           # <-- Permite un ajuste más fiel a tus rarezas
+            solver="lbfgs",
+            alpha=1e-4, 
             max_iter=2000,
             random_state=42
         )
@@ -291,7 +307,13 @@ class Juego:
               float(self.memoria_acciones[0]), 
               float(self.memoria_acciones[1]), 
               float(self.memoria_acciones[2]), 
-              float(self.memoria_acciones[3])]]
+              float(self.memoria_acciones[3]),
+              float(self.memoria_acciones[4]),
+              float(self.memoria_acciones[5]),
+              float(self.memoria_acciones[6]),
+              float(self.memoria_acciones[7]),
+              float(self.memoria_acciones[8]),
+              float(self.memoria_acciones[9])]]
               
         Xs = self.scaler.transform(X)
         return int(self.modelo.predict(Xs)[0])
