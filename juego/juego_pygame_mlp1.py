@@ -36,10 +36,8 @@ class Sample:
     h4: int  
     h5: int
     h6: int
-    h7: int   # Nuevos frames de memoria añadidos
-    h8: int
-    h9: int
-    h10: int
+    h7: int   
+    h8: int   
     accion: int    
 
 class Juego:
@@ -49,7 +47,7 @@ class Juego:
         self._fullscreen = False
         start_w, start_h = BASE_W, BASE_H
         self.pantalla = pygame.display.set_mode((start_w, start_h), self._flags)
-        pygame.display.set_caption("IA: Clonación con Estados Discretos (IoT Style) - Memoria Ampliada")
+        pygame.display.set_caption("IA: Clonación con 8 Frames de Memoria")
 
         self.BLANCO = (255, 255, 255)
         self.NEGRO = (0, 0, 0)
@@ -64,8 +62,8 @@ class Juego:
         self.scaler: Optional[StandardScaler] = None
         self.modelo_entrenado = False
         
-        # Historial ampliado a 10 frames para capturar espameo
-        self.memoria_acciones = [0] * 10
+        # Historial ajustado a 8 frames para balancear la ecuación
+        self.memoria_acciones = [0] * 8
 
         self.w, self.h = start_w, start_h
         self.scale = 1.0
@@ -132,7 +130,7 @@ class Juego:
         self.en_suelo = True
         self.salto_vel = self.salto_vel_inicial
         self.fondo_x1, self.fondo_x2 = 0, self.w
-        self.memoria_acciones = [0] * 10 
+        self.memoria_acciones = [0] * 8 
 
     def _reset_modelo(self) -> None:
         self.modelo = None
@@ -146,9 +144,9 @@ class Juego:
         try:
             with open(ruta, "w", newline="", encoding="utf-8") as f:
                 writer = csv.writer(f)
-                writer.writerow(["velocidad_bala", "distancia", "bala_y", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "h10", "accion"])
+                writer.writerow(["velocidad_bala", "distancia", "bala_y", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "accion"])
                 for s in self.datos_modelo:
-                    writer.writerow([s.velocidad_bala, s.distancia, s.bala_y, s.h1, s.h2, s.h3, s.h4, s.h5, s.h6, s.h7, s.h8, s.h9, s.h10, s.accion])
+                    writer.writerow([s.velocidad_bala, s.distancia, s.bala_y, s.h1, s.h2, s.h3, s.h4, s.h5, s.h6, s.h7, s.h8, s.accion])
         except Exception as e:
             return f"Error al guardar CSV: {e}"
         return f"CSV guardado en datos_mlp.csv ({len(self.datos_modelo)} filas)."
@@ -197,13 +195,9 @@ class Juego:
 
     def disparar_bala(self) -> None:
         if not self.bala_disparada:
-            # =============================================================
-            # CAMBIO CLAVE: Discretización del espacio de velocidad
-            # =============================================================
-            opciones_velocidad = [-10, -16, -24] # Lenta, Rápida, Muy Rápida
+            opciones_velocidad = [-10, -16, -24] 
             self.velocidad_bala = int(random.choice(opciones_velocidad) * self.scale)
             
-            # Alturas discretas (Alta, Media, Baja)
             tipo_bala = random.randint(1, 3)
             
             if tipo_bala == 1: self.bala.y = self.ground_y + int(32 * self.scale)  
@@ -258,8 +252,6 @@ class Juego:
             h6=float(self.memoria_acciones[5]),
             h7=float(self.memoria_acciones[6]),
             h8=float(self.memoria_acciones[7]),
-            h9=float(self.memoria_acciones[8]),
-            h10=float(self.memoria_acciones[9]),
             accion=accion_manual
         ))
 
@@ -267,18 +259,49 @@ class Juego:
         if len(self.datos_modelo) < 150:
             return False, f"Faltan datos ({len(self.datos_modelo)}/150). Juega en Manual."
         
-        X = [[s.velocidad_bala, s.distancia, s.bala_y, s.h1, s.h2, s.h3, s.h4, s.h5, s.h6, s.h7, s.h8, s.h9, s.h10] for s in self.datos_modelo]
-        y = [s.accion for s in self.datos_modelo]
+        # =========================================================
+        # MITIGACIÓN DE EXCEPCIONES Y RUIDO (Umbrales Separados)
+        # =========================================================
+        # 1. Contamos cuántas veces hiciste cada acción
+        conteos = {0: 0, 1: 0, 2: 0}
+        for s in self.datos_modelo:
+            conteos[s.accion] += 1
+            
+        # 2. Definimos umbrales independientes para cada acción
+        UMBRAL_SALTO = 4    # Mínimo de veces que debes saltar para que no sea ignorado
+        UMBRAL_AGACHA = 8   # Mínimo de veces que debes agacharte para que no sea ignorado
         
+        # El 0 (no hacer nada) siempre es válido
+        acciones_validas = [0]
+        
+        # Evaluamos el estado de Salto (1)
+        if conteos[1] >= UMBRAL_SALTO: 
+            acciones_validas.append(1)
+        else:
+            print(f"Filtro: Ignorando Salto (1) -> Ocurrió {conteos[1]} veces (mínimo {UMBRAL_SALTO}).")
+            
+        # Evaluamos el estado de Agacharse (2)
+        if conteos[2] >= UMBRAL_AGACHA: 
+            acciones_validas.append(2)
+        else:
+            print(f"Filtro: Ignorando Agacharse (2) -> Ocurrió {conteos[2]} veces (mínimo {UMBRAL_AGACHA}).")
+
+        # 3. Filtramos los datos ignorando las acciones que no superaron sus respectivos umbrales
+        datos_limpios = [s for s in self.datos_modelo if s.accion in acciones_validas]
+
+        # Preparamos X e y solo con los datos válidos
+        X = [[s.velocidad_bala, s.distancia, s.bala_y, s.h1, s.h2, s.h3, s.h4, s.h5, s.h6, s.h7, s.h8] for s in datos_limpios]
+        y = [s.accion for s in datos_limpios]
+        
+        # Verificamos que tras limpiar siga habiendo al menos 2 acciones diferentes para entrenar
         if len(set(y)) < 2:
-            return False, "Debes registrar al menos dos acciones diferentes."
+            return False, "Tras ignorar las excepciones, no hay suficientes acciones distintas para aprender."
 
         self.scaler = StandardScaler()
         X_scaled = self.scaler.fit_transform(X)
         
-        # Aumentamos ligeramente las capas ocultas para manejar la mayor memoria
         self.modelo = MLPClassifier(
-            hidden_layer_sizes=(32, 32), 
+            hidden_layer_sizes=(32, 16), 
             activation="relu",
             solver="lbfgs",
             alpha=1e-4, 
@@ -311,9 +334,7 @@ class Juego:
               float(self.memoria_acciones[4]),
               float(self.memoria_acciones[5]),
               float(self.memoria_acciones[6]),
-              float(self.memoria_acciones[7]),
-              float(self.memoria_acciones[8]),
-              float(self.memoria_acciones[9])]]
+              float(self.memoria_acciones[7])]]
               
         Xs = self.scaler.transform(X)
         return int(self.modelo.predict(Xs)[0])
