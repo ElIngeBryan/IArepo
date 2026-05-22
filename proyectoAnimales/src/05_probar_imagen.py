@@ -46,8 +46,8 @@ interfaz = gr.Interface(
     fn=clasificar_animal,                # La función que procesa la imagen
     inputs=gr.Image(),                   # Componente de entrada
     outputs=gr.Label(num_top_classes=3), # Componente de salida
-    title="🦍 Clasificador de Animales con IA",
-    description="Sube una foto, pega una imagen de internet o usa tu cámara web para identificar si es una Araña, Ballena, Chango, Pájaro o Rana.",
+    title="Clasificador de Animales con IA",
+    description="",
     flagging_mode="never"                # Versión actualizada para ocultar el botón de reporte
 )
 
