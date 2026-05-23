@@ -1,0 +1,13 @@
+{
+  "name": "copilot-bebe-c",
+  "displayName": "Bryan AI Assistant",
+  "description": "Asistente de código de Bryan en C",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "activationEvents": [
+    "onLanguage:c"
+  ],
+  "main": "./extension.js"
+}

@@ -269,7 +269,7 @@ class Juego:
             
         # 2. Definimos umbrales independientes para cada acción
         UMBRAL_SALTO = 4    # Mínimo de veces que debes saltar para que no sea ignorado
-        UMBRAL_AGACHA = 8   # Mínimo de veces que debes agacharte para que no sea ignorado
+        UMBRAL_AGACHA = 6   # Mínimo de veces que debes agacharte para que no sea ignorado
         
         # El 0 (no hacer nada) siempre es válido
         acciones_validas = [0]
