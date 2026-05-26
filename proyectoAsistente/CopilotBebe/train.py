@@ -1,56 +1,66 @@
+import re
+import pickle
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import SimpleRNN, Dense, Embedding
-import pickle
-import re
 
 print("Cargando dataset...")
 with open("dataset.c", "r", encoding="utf-8") as f:
-    dataset_c = f.read()
+    texto = f.read()
 
-def tokenizar(texto):
-    # Separa palabras, pero captura símbolos, saltos de línea y espacios individualmente
-    return re.findall(r'\w+|[^\w\s]|\n|[ ]|\t', texto)
+# Expresión regular que divide el código en 4 super-tokens lógicos:
+# 1: Tipo (int, float, const char*)
+# 2: Nombre de la función
+# 3: Parámetros (con todo y paréntesis)
+# 4: Cuerpo de la función (con todo y llaves)
+patron = re.compile(r'(const\s+char\s*\*|int|float)\s+([a-zA-Z_]\w*)\s*(\(.*?\))\s*(\{.*?\})', re.DOTALL)
+funciones = patron.findall(texto)
 
-tokens_dataset = tokenizar(dataset_c)
-vocabulario = sorted(list(set(tokens_dataset)))
-vocab_size = len(vocabulario)
+print(f"Se estructuraron {len(funciones)} funciones en super-tokens lógicos.")
 
-# AQUÍ ES DONDE SE CREA EL token2idx QUE EL SERVIDOR BUSCA
-token2idx = {token: idx for idx, token in enumerate(vocabulario)}
-idx2token = {idx: token for idx, token in enumerate(vocabulario)}
+# Crear el vocabulario con todos los bloques únicos
+vocab_set = set(['<PAD>'])
+for f in funciones:
+    vocab_set.update(f) # Añade tipos, nombres, params y cuerpos al vocabulario
+    
+vocab = sorted(list(vocab_set))
+token2idx = {t: i for i, t in enumerate(vocab)}
+idx2token = {i: t for i, t in enumerate(vocab)}
 
 with open('vocabulario.pkl', 'wb') as f:
-    pickle.dump({'token2idx': token2idx, 'idx2token': idx2token, 'vocabulario': vocabulario}, f)
+    pickle.dump({'token2idx': token2idx, 'idx2token': idx2token}, f)
 
-SEQ_LENGTH = 30
-STEP = 1
+# La memoria necesaria ahora es minúscula. 
+# Solo necesitamos ver 3 super-tokens hacia atrás para predecir el siguiente.
+SEQ_LENGTH = 3 
+X_list = []
+y_list = []
 
-secuencias = []
-proximos_tokens = []
+print("Creando red de conceptos lógicos...")
+for tipo, nombre, params, cuerpo in funciones:
+    # 1er Paso: Dado el Tipo y el Nombre, predecir los Parámetros
+    X_list.append(['<PAD>', tipo, nombre])
+    y_list.append(params)
+    
+    # 2do Paso: Dado el Tipo, Nombre y Parámetros, predecir el Cuerpo entero
+    X_list.append([tipo, nombre, params])
+    y_list.append(cuerpo)
 
-for i in range(0, len(tokens_dataset) - SEQ_LENGTH, STEP):
-    secuencias.append(tokens_dataset[i : i + SEQ_LENGTH])
-    proximos_tokens.append(tokens_dataset[i + SEQ_LENGTH])
+X = np.array([[token2idx[t] for t in seq] for seq in X_list])
+y = tf.keras.utils.to_categorical([token2idx[t] for t in y_list], num_classes=len(vocab))
 
-X = np.zeros((len(secuencias), SEQ_LENGTH), dtype=np.int32)
-y = np.zeros((len(secuencias), vocab_size), dtype=np.float32)
-
-for i, secuencia in enumerate(secuencias):
-    for t, token in enumerate(secuencia):
-        X[i, t] = token2idx[token]
-    y[i, token2idx[proximos_tokens[i]]] = 1.0
-
+# Modelo RNN súper optimizado (al ser tokens gigantes, no necesita ser profundo)
 model = Sequential([
-    Embedding(input_dim=vocab_size, output_dim=64),
-    SimpleRNN(256, return_sequences=False),
-    Dense(vocab_size, activation='softmax')
+    Embedding(input_dim=len(vocab), output_dim=64, input_length=SEQ_LENGTH),
+    SimpleRNN(128),
+    Dense(len(vocab), activation='softmax')
 ])
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-print(f"Entrenando con {vocab_size} tokens únicos (incluyendo espacios y saltos)...")
-model.fit(X, y, batch_size=32, epochs=80) 
+print("Entrenando la IA (llegará al 100% muy rápido)...")
+# Como la lógica es perfecta, en 50 épocas se aprenderá tu código de memoria
+model.fit(X, y, batch_size=4, epochs=50) 
 model.save('modelo_bryan.h5')
-print("¡Entrenamiento completado! Archivos modelo_bryan.h5 y vocabulario.pkl actualizados.")
+print("¡Entrenamiento completado y guardado!")

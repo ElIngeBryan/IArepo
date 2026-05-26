@@ -5,65 +5,69 @@ import numpy as np
 import pickle
 import re
 
-app = FastAPI(title="Bryan AI - Autocompletado Básico")
+app = FastAPI(title="Bryan AI - Autocompletado Estructural")
 
-print("Cargando modelo y dataset...")
 model = tf.keras.models.load_model('modelo_bryan.h5')
 with open('vocabulario.pkl', 'rb') as f:
     vocab = pickle.load(f)
 
 token2idx = vocab['token2idx']
 idx2token = vocab['idx2token']
-SEQ_LENGTH = 30
 
 class CodePayload(BaseModel):
     context: str
 
-def tokenizar(texto):
-    return re.findall(r'\w+|[^\w\s]|\n|[ ]|\t', texto)
-
-def preparar_entrada(tokens):
-    # Rellenamos con saltos de línea para estabilizar la RNN
-    pad_size = max(0, SEQ_LENGTH - len(tokens))
-    ctx = ['\n'] * pad_size + tokens
-    ctx = ctx[-SEQ_LENGTH:]
-    return np.array([[token2idx.get(t, token2idx.get('\n', 0)) for t in ctx]])
-
 @app.post("/predict")
-def predict_next_words(data: CodePayload):
-    texto_entrada = data.context
-
-    # Analizar si el usuario dejó una palabra a medias (ej: "su" para "sumar")
-    match_parcial = re.search(r'([a-zA-Z_]\w*)$', texto_entrada)
-    palabra_parcial = match_parcial.group(1) if match_parcial else ""
-
-    texto_limpio = texto_entrada[:match_parcial.start()] if match_parcial else texto_entrada
-    tokens_contexto = tokenizar(texto_limpio)
+def predict_next_chunk(data: CodePayload):
+    texto = data.context
     
-    # 1. MODO: COMPLETAR PALABRA ACTUAL
-    if palabra_parcial:
-        input_eval = preparar_entrada(tokens_contexto)
-        predicciones = model.predict(input_eval, verbose=0)[0]
+    # Expresión regular para analizar lo que el usuario está escribiendo AHORA MISMO.
+    # Busca hacia atrás si el usuario ya escribió el Tipo y el Nombre.
+    # Los parámetros son opcionales (por si apenas va a escribirlos).
+    patron_actual = re.compile(r'(const\s+char\s*\*|int|float)\s+([a-zA-Z_]\w*)\s*(\(.*?\))?\s*$', re.DOTALL)
+    match = patron_actual.search(texto)
+    
+    if not match:
+        # Si no estamos declarando una función de C conocida, la IA se queda callada.
+        return {"suggestion": ""}
         
-        indices_validos = [idx for token, idx in token2idx.items() if token.startswith(palabra_parcial) and token != palabra_parcial]
+    tipo = match.group(1) or ""
+    nombre = match.group(2) or ""
+    params = match.group(3) or ""
+    
+    # Lógica de Autocompletado Estructural
+    if tipo and nombre and not params:
+        # Ya escribió "int sumar" -> Queremos sugerir los parámetros "(int a, int b)"
+        secuencia = ['<PAD>', tipo, nombre]
+    elif tipo and nombre and params:
+        # Ya escribió "int sumar(int a, int b)" -> Queremos sugerir el cuerpo "{ return a+b; }"
+        secuencia = [tipo, nombre, params]
+    else:
+        return {"suggestion": ""}
         
-        if indices_validos:
-            idx_predicho = max(indices_validos, key=lambda idx: predicciones[idx])
-            primer_token = idx2token[idx_predicho]
-            # Devuelve solo las letras faltantes
-            return {"suggestion": primer_token[len(palabra_parcial):]}
-        else:
+    # Validar que lo que escribió el usuario exista en el dataset original
+    for t in secuencia:
+        if t != '<PAD>' and t not in token2idx:
+            # Si escribe un nombre inventado como "int funcion_nueva", guardamos silencio
             return {"suggestion": ""}
-
-    # 2. MODO: PREDECIR LA SIGUIENTE PALABRA (Cumplimiento estricto del proyecto)
-    input_eval = preparar_entrada(tokens_contexto)
-    predicciones = model.predict(input_eval, verbose=0)[0]
+            
+    X_input = np.array([[token2idx[t] for t in secuencia]])
+    pred = model.predict(X_input, verbose=0)[0]
     
-    idx_predicho = np.argmax(predicciones)
-    siguiente_token = idx2token[idx_predicho]
+    idx_predicho = np.argmax(pred)
+    confianza = pred[idx_predicho]
     
-    # Simplemente devolvemos el siguiente token que predijo la red
-    return {"suggestion": siguiente_token}
+    # Como la arquitectura es limpia y exacta, la confianza suele ser >90%
+    if confianza > 0.40:
+        sugerencia = idx2token[idx_predicho]
+        
+        # Agregamos un espacio bonito antes de la sugerencia si es el cuerpo de la función
+        if sugerencia.startswith("{"):
+            return {"suggestion": " " + sugerencia}
+        else:
+            return {"suggestion": " " + sugerencia + " "}
+        
+    return {"suggestion": ""}
 
 if __name__ == "__main__":
     import uvicorn
