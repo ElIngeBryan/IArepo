@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import SimpleRNN, Dense, Embedding
+from tensorflow.keras.layers import SimpleRNN, Dense, Embedding, Input
 
 print("Cargando dataset...")
 with open("dataset.c", "r", encoding="utf-8") as f:
@@ -14,7 +14,8 @@ with open("dataset.c", "r", encoding="utf-8") as f:
 # 2: Nombre de la función
 # 3: Parámetros (con todo y paréntesis)
 # 4: Cuerpo de la función (con todo y llaves)
-patron = re.compile(r'(const\s+char\s*\*|int|float)\s+([a-zA-Z_]\w*)\s*(\(.*?\))\s*(\{.*?\})', re.DOTALL)
+# CORRECCIÓN APLICADA: \{.*?^\} y re.MULTILINE para leer funciones con llaves internas
+patron = re.compile(r'(const\s+char\s*\*|int|float)\s+([a-zA-Z_]\w*)\s*(\(.*?\))\s*(\{.*?^\})', re.DOTALL | re.MULTILINE)
 funciones = patron.findall(texto)
 
 print(f"Se estructuraron {len(funciones)} funciones en super-tokens lógicos.")
@@ -47,12 +48,14 @@ for tipo, nombre, params, cuerpo in funciones:
     X_list.append([tipo, nombre, params])
     y_list.append(cuerpo)
 
-X = np.array([[token2idx[t] for t in seq] for seq in X_list])
+# Forzamos el tipo int32 para que Keras 3 no tenga dudas de la estructura
+X = np.array([[token2idx[t] for t in seq] for seq in X_list], dtype=np.int32)
 y = tf.keras.utils.to_categorical([token2idx[t] for t in y_list], num_classes=len(vocab))
 
-# Modelo RNN súper optimizado (al ser tokens gigantes, no necesita ser profundo)
+# Modelo RNN súper optimizado (Compatible con Keras 3)
 model = Sequential([
-    Embedding(input_dim=len(vocab), output_dim=64, input_length=SEQ_LENGTH),
+    Input(shape=(SEQ_LENGTH,)),
+    Embedding(input_dim=len(vocab), output_dim=64),
     SimpleRNN(128),
     Dense(len(vocab), activation='softmax')
 ])
@@ -60,7 +63,7 @@ model = Sequential([
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 print("Entrenando la IA (llegará al 100% muy rápido)...")
-# Como la lógica es perfecta, en 50 épocas se aprenderá tu código de memoria
-model.fit(X, y, batch_size=4, epochs=50) 
+# Como la lógica es perfecta, en 25 épocas se aprenderá tu código de memoria
+model.fit(X, y, batch_size=4, epochs=25) 
 model.save('modelo_bryan.h5')
 print("¡Entrenamiento completado y guardado!")
