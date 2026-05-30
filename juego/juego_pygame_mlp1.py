@@ -3,6 +3,7 @@ import csv
 import random
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
+from collections import Counter
 
 import pygame
 from sklearn.neural_network import MLPClassifier
@@ -256,55 +257,40 @@ class Juego:
         ))
 
     def entrenar_modelo(self) -> Tuple[bool, str]:
+        # 1. Validación de cantidad de datos
         if len(self.datos_modelo) < 150:
             return False, f"Faltan datos ({len(self.datos_modelo)}/150). Juega en Manual."
         
-        # =========================================================
-        # MITIGACIÓN DE EXCEPCIONES Y RUIDO (Umbrales Separados)
-        # =========================================================
-        # 1. Contamos cuántas veces hiciste cada acción
-        conteos = {0: 0, 1: 0, 2: 0}
-        for s in self.datos_modelo:
-            conteos[s.accion] += 1
-            
-        # 2. Definimos umbrales independientes para cada acción
-        UMBRAL_SALTO = 4    # Mínimo de veces que debes saltar para que no sea ignorado
-        UMBRAL_AGACHA = 6   # Mínimo de veces que debes agacharte para que no sea ignorado
+        # 2. Extraemos las acciones directamente (SIN FILTROS DE PORCENTAJES)
+        y = [s.accion for s in self.datos_modelo]
         
-        # El 0 (no hacer nada) siempre es válido
-        acciones_validas = [0]
-        
-        # Evaluamos el estado de Salto (1)
-        if conteos[1] >= UMBRAL_SALTO: 
-            acciones_validas.append(1)
-        else:
-            print(f"Filtro: Ignorando Salto (1) -> Ocurrió {conteos[1]} veces (mínimo {UMBRAL_SALTO}).")
-            
-        # Evaluamos el estado de Agacharse (2)
-        if conteos[2] >= UMBRAL_AGACHA: 
-            acciones_validas.append(2)
-        else:
-            print(f"Filtro: Ignorando Agacharse (2) -> Ocurrió {conteos[2]} veces (mínimo {UMBRAL_AGACHA}).")
-
-        # 3. Filtramos los datos ignorando las acciones que no superaron sus respectivos umbrales
-        datos_limpios = [s for s in self.datos_modelo if s.accion in acciones_validas]
-
-        # Preparamos X e y solo con los datos válidos
-        X = [[s.velocidad_bala, s.distancia, s.bala_y, s.h1, s.h2, s.h3, s.h4, s.h5, s.h6, s.h7, s.h8] for s in datos_limpios]
-        y = [s.accion for s in datos_limpios]
-        
-        # Verificamos que tras limpiar siga habiendo al menos 2 acciones diferentes para entrenar
+        # 3. Bypass de seguridad: Por si literalmente jugaste 100% perfecto 
+        # y ni siquiera hubo 1 error.
         if len(set(y)) < 2:
-            return False, "Tras ignorar las excepciones, no hay suficientes acciones distintas para aprender."
+            self.accion_unica = y[0]
+            self.modelo_entrenado = True
+            nombres = {0: "Nada", 1: "Saltar", 2: "Agacharse"}
+            nombre_accion = nombres.get(self.accion_unica, str(self.accion_unica))
+            return True, f"Bypass: IA memorizó hacer SOLO: {nombre_accion}."
 
+        self.accion_unica = None
+        
+        # 4. Construcción de la matriz de características X
+        X = [[s.velocidad_bala, s.distancia, s.bala_y, s.h1, s.h2, s.h3, s.h4, s.h5, s.h6, s.h7, s.h8] for s in self.datos_modelo]
+
+        # 5. Normalización
         self.scaler = StandardScaler()
         X_scaled = self.scaler.fit_transform(X)
         
+        # 6. El Cerebro con Regularización Extrema (El "Filtro Matemático")
         self.modelo = MLPClassifier(
             hidden_layer_sizes=(32, 16), 
             activation="relu",
             solver="lbfgs",
-            alpha=1e-4, 
+            # ==============================================================
+            # Un alpha de 2.0 (o hasta 5.0) actúa como una liga muy tensa.
+            # ==============================================================
+            alpha=1.2, 
             max_iter=2000,
             random_state=42
         )
@@ -312,7 +298,8 @@ class Juego:
         self.modelo.fit(X_scaled, y)
         self.modelo_entrenado = True
         acc = self.modelo.score(X_scaled, y)
-        return True, f"¡Clonación Lista! Similitud: {acc*100:.1f}%"
+        
+        return True, f"Entrenamiento puro (Alpha 2.0). Similitud: {acc*100:.1f}%"
 
     def decision_auto(self) -> int:
         if not self.modelo_entrenado: return 0
@@ -440,6 +427,22 @@ class Juego:
             self.bala.x += self.velocidad_bala
             self.pantalla.blit(self.bala_img, (self.bala.x, self.bala.y))
             if self.bala.x < -self.bullet_size[0]: self.bala_disparada = False
+            
+            # =================================================================
+            # DEBUG VISUAL: Impresión lineal de estados (HUD)
+            # =================================================================
+            estado_str = " - ".join(str(int(x)) for x in self.memoria_acciones)
+            txt_debug = self.fuente.render(f"Historial (8 frames): [{estado_str}]", True, self.AMARILLO)
+            
+            # Agregamos un fondo semitransparente para mejor legibilidad
+            bg_rect = txt_debug.get_rect(topleft=(20, 20))
+            bg_surface = pygame.Surface((bg_rect.width + 10, bg_rect.height + 10))
+            bg_surface.set_alpha(150)
+            bg_surface.fill(self.NEGRO)
+            
+            self.pantalla.blit(bg_surface, (15, 15))
+            self.pantalla.blit(txt_debug, (20, 20))
+            # =================================================================
             
             if self.jugador.colliderect(self.bala): self._reset_estado_juego()
             

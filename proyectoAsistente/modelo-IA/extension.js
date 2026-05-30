@@ -39,11 +39,6 @@ function activate(context) {
     const provider = vscode.languages.registerInlineCompletionItemProvider(
         { pattern: '**' }, // Se activa en cualquier archivo, idealmente archivos .c
         {
-            async provideInlineCompletionItems(document, position, context, token) {
-                // Obtenemos los últimos 40 caracteres escritos
-                const startPos = position.character >= 40 
-                    ? new vscode.Position(position.line, position.character - 40)
-                    : new vscode.Position(Math.max(0, position.line - 1), 0); // Aproximación básica
             async provideInlineCompletionItems(document, position) {
                 const rangeBeforeCursor = new vscode.Range(new vscode.Position(0, 0), position);
                 const fullTextBefore = document.getText(rangeBeforeCursor);
@@ -70,6 +65,7 @@ function activate(context) {
             }
         }
     );
+    
 
     context.subscriptions.push(provider);
 }

@@ -52,18 +52,31 @@ for tipo, nombre, params, cuerpo in funciones:
 X = np.array([[token2idx[t] for t in seq] for seq in X_list], dtype=np.int32)
 y = tf.keras.utils.to_categorical([token2idx[t] for t in y_list], num_classes=len(vocab))
 
-# Modelo RNN súper optimizado (Compatible con Keras 3)
+
 model = Sequential([
+    # Define la entrada: Espera recibir secuencias exactas de 3 pasos lógicos.
     Input(shape=(SEQ_LENGTH,)),
+    
+    # 1. ALGORITMO DE VECTORIZACIÓN: Convierte los números en vectores matemáticos 
+    # de 64 dimensiones para que la IA agrupe conceptos lógicos similares.
     Embedding(input_dim=len(vocab), output_dim=64),
+    
+    # 2. ALGORITMO RECURRENTE (VANILLA RNN): La memoria a corto plazo (128 neuronas).
+    # Se retroalimenta a sí misma para analizar el orden temporal de las palabras.
     SimpleRNN(128),
+    
+    # 3. ALGORITMO DE PROBABILIDAD (SOFTMAX): Convierte los cálculos crudos de la red 
+    # en porcentajes exactos de probabilidad (0 a 100%) para sugerir el código correcto.
     Dense(len(vocab), activation='softmax')
 ])
 
+# 4. ALGORITMOS DE EVALUACIÓN Y AJUSTE:
+# - adam: Optimizador que calcula derivadas para ajustar los "pesos" rápidamente.
+# - categorical_crossentropy: Algoritmo que castiga matemáticamente los errores al adivinar.
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 print("Entrenando la IA (llegará al 100% muy rápido)...")
-# Como la lógica es perfecta, en 25 épocas se aprenderá tu código de memoria
-model.fit(X, y, batch_size=4, epochs=25) 
-model.save('modelo_bryan.h5')
-print("¡Entrenamiento completado y guardado!")
+
+# 5. ALGORITMO DE ENTRENAMIENTO (BPTT - Backpropagation Through Time):
+# Desenrolla la red en el tiempo y ajusta los errores hacia atrás durante 25 pasadas.
+model.fit(X, y, batch_size=4, epochs=25)
